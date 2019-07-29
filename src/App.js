@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './App.css';
 import GraphMap from './components/GraphMap';
 
 function App() {
