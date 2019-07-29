@@ -4,12 +4,13 @@ export class GraphMap extends Component {
   constructor(props){
     super()
 
-    state = {
+    this.state = {
       cooldown: null,
       inventory: [],
+      next_room_id: null,
       room_data: {
-        current_room: 0,
-        previous_room: null,
+        current_room_id: null,
+        previous_room_id: null,
         exits: [],
         items: [],
         players: [],
@@ -40,6 +41,7 @@ export class GraphMap extends Component {
     this.getData();
   }
 
+
   getData = async () => {
     try {
       let res = await axios({
@@ -58,13 +60,29 @@ export class GraphMap extends Component {
       console.log(res.data);
       console.log(res.data.room_id);
 
-      return res.data;
+      this.setState({
+        player_status: {
+          name: res.data.name,
+          encumberance: res.data.encumberance,
+          strength: res.data.strength,
+          speed: res.data.speed,
+          gold: res.data.gold,
+          inventory: res.data.inventory,
+          status: res.data.status,
+          errors: res.data.errors,
+          messages: res.data.messages,
+        }
+      })
+
+      console.log('STATE:', this.state)
     } catch (err) {
       console.error(err);
     }
   };
 
   movement = async (move, next_room_id = null) => {
+    // TODO: Make call to another method that grabs the next room from our server --> update state
+
     let data;
     if (next_room_id !== null) {
       data = {
@@ -86,9 +104,30 @@ export class GraphMap extends Component {
         data
       });
       console.log(res.data);
-      setTimeout(() => {
-        this.getData();
-      }, res.data.cooldown * 1000);
+
+
+      this.setState({
+        cooldown: res.data.cooldown,
+        room_data: {
+          current_room_id: res.data.room_id,
+          previous_room_id: this.state.room_data.current_room_id,
+          exits: res.data.exits,
+          items: res.data.items,
+          players: res.data.players,
+          errors: res.data.errors,
+          messages: res.data.messages,
+          title: res.data.title,
+          description: res.data.description,
+          coordinates: res.data.coordinates,
+          elevation: res.data.elevation,
+          terrain: res.data.terrain,
+        }
+      })
+
+      console.log('STATE:', this.state)
+      // setTimeout(() => {
+      //   this.getData();
+      // }, res.data.cooldown * 1000);
     } catch (err) {
       console.error(err);
     }
