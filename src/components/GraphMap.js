@@ -1,8 +1,76 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 export class GraphMap extends Component {
+  constructor(props){
+    super()
+
+    this.state = {
+      cooldown: null,
+      inventory: [],
+      next_room_id: null,
+      room_data: {
+        current_room_id: null,
+        previous_room_id: null,
+        exits: [],
+        items: [],
+        players: [],
+        errors: [],
+        messages: [],
+        title: null,
+        description: null,
+        coordinates: null,
+        elevation: null,
+        terrain: '',
+      },
+      player_status: {
+        name: '',
+        encumberance: null,
+        strength: 10,
+        speed: 10,
+        gold: null,
+        inventory: [],
+        status: [],
+        errors: [],
+        messages: [],
+      },
+      examined: {}
+    }
+  }
+
+
   componentDidMount() {
     this.getData();
+  }
+
+
+  examineRoom = async (name) => {
+    let data = {name}
+    
+    try {
+      let res = await axios({
+        method: 'post',
+        url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/`,
+        headers: {
+          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
+        },
+        data
+      });
+
+      console.log(res.data)
+
+      this.setState({
+        cooldown: res.data.cooldown,
+        examined: {
+          name: res.data.name,
+          description: res.data.description,
+          errors: res.data.errors,
+          messages: res.data.messages
+        }
+      })
+
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   getData = async () => {
@@ -23,13 +91,28 @@ export class GraphMap extends Component {
       console.log(res.data);
       console.log(res.data.room_id);
 
-      return res.data;
+      this.setState({
+        player_status: {
+          name: res.data.name,
+          encumberance: res.data.encumberance,
+          strength: res.data.strength,
+          speed: res.data.speed,
+          gold: res.data.gold,
+          inventory: res.data.inventory,
+          status: res.data.status,
+          errors: res.data.errors,
+          messages: res.data.messages,
+        }
+      })
+
     } catch (err) {
       console.error(err);
     }
   };
 
   movement = async (move, next_room_id = null) => {
+    // TODO: Make call to another method that grabs the next room from our server --> update state
+
     let data;
     if (next_room_id !== null) {
       data = {
@@ -51,9 +134,29 @@ export class GraphMap extends Component {
         data
       });
       console.log(res.data);
-      setTimeout(() => {
-        this.getData();
-      }, res.data.cooldown * 1000);
+
+
+      this.setState({
+        cooldown: res.data.cooldown,
+        room_data: {
+          current_room_id: res.data.room_id,
+          previous_room_id: this.state.room_data.current_room_id,
+          exits: res.data.exits,
+          items: res.data.items,
+          players: res.data.players,
+          errors: res.data.errors,
+          messages: res.data.messages,
+          title: res.data.title,
+          description: res.data.description,
+          coordinates: res.data.coordinates,
+          elevation: res.data.elevation,
+          terrain: res.data.terrain,
+        }
+      })
+
+      // setTimeout(() => {
+      //   this.getData();
+      // }, res.data.cooldown * 1000);
     } catch (err) {
       console.error(err);
     }
@@ -66,6 +169,7 @@ export class GraphMap extends Component {
         <button onClick={() => this.movement('s')}>South</button>
         <button onClick={() => this.movement('w')}>West</button>
         <button onClick={() => this.movement('e')}>East</button>
+        <button onClick={() => this.examineRoom('player66')} >Examine #66</button>
       </div>
     );
   }
