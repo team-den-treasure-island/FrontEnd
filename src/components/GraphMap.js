@@ -166,9 +166,7 @@ export class GraphMap extends Component {
     // TODO: Make call to another method that grabs the next room from our server --> update state
     let data;
     let dir = Object.values(move)[0];
-    console.log(dir);
     let next = datajson[this.state.room_data.current_room_id][1][dir];
-    console.log(next);
     data = {
       direction: dir.toString(),
       next_room_id: next.toString()
@@ -285,7 +283,26 @@ export class GraphMap extends Component {
             {exit}
           </button>
         ))}
-
+        {this.state.room_data.items === [] ? (
+          this.state.room_data.items.map(item => (
+            <ul key={item}>
+              <li>Items in room:</li>
+              <li>{item}</li>
+            </ul>
+          ))
+        ) : (
+          <p>This room contains no items</p>
+        )}
+        {this.state.room_data.players === [] ? (
+          this.state.room_data.players.map(player => (
+            <ul key={player}>
+              <li>Players in room:</li>
+              <li>{player}</li>
+            </ul>
+          ))
+        ) : (
+          <p>You are alone in this room</p>
+        )}
         <button onClick={() => this.examineRoom('player66')}>
           Examine #66
         </button>
