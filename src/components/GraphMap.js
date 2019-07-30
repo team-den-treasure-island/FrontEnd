@@ -4,7 +4,7 @@ import uuid from 'uuid';
 import axios from 'axios';
 
 import { datajson } from '../data/data';
-import Map from './Map.js'
+import Map from './Map.js';
 
 export class GraphMap extends Component {
   constructor(props) {
@@ -48,7 +48,7 @@ export class GraphMap extends Component {
 
   componentDidMount() {
     this.getInit();
-    this.getCoords(datajson)
+    this.getCoords(datajson);
   }
 
   examineRoom = async name => {
@@ -100,19 +100,19 @@ export class GraphMap extends Component {
   // }
 
   getCoords = data => {
-    let coordinates = []
-    let neighbors = []
-    for (let key in data){
-      coordinates.push({x: data[key][0]['x'], y: data[key][0]['y']})
-      neighbors.push(data[key][1])
+    let coordinates = [];
+    let neighbors = [];
+    for (let key in data) {
+      coordinates.push({ x: data[key][0]['x'], y: data[key][0]['y'] });
+      neighbors.push(data[key][1]);
     }
-    console.log('COORDINATES', coordinates)
-    console.log('neighbors', neighbors)
+    console.log('COORDINATES', coordinates);
+    console.log('neighbors', neighbors);
     this.setState({
       coordinates,
       neighbors
-    })
-  }
+    });
+  };
 
   getData = async () => {
     try {
@@ -295,7 +295,9 @@ export class GraphMap extends Component {
   render() {
     return (
       <div>
-        <Map 
+        <Map
+          nextRoom={this.state.next_room_id}
+          roomId={this.state.room_data.current_room_id}
           coordinates={this.state.coordinates}
           neighbors={this.state.neighbors}
         />
