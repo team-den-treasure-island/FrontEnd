@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CountdownTimer from 'react-component-countdown-timer';
-import { data } from '../data/data';
+import { datajson } from '../data/data';
 import uuid from 'uuid';
 import axios from 'axios';
 export class GraphMap extends Component {
@@ -162,19 +162,15 @@ export class GraphMap extends Component {
     }
   };
 
-  movement = async (move, next_room_id = null) => {
+  movement = async move => {
     // TODO: Make call to another method that grabs the next room from our server --> update state
     let data;
-    if (next_room_id !== null) {
-      data = {
-        direction: Object.values(move)[0].toString(),
-        next_room_id: next_room_id.toString()
-      };
-    } else {
-      data = {
-        direction: Object.values(move)[0].toString()
-      };
-    }
+    let dir = Object.values(move)[0];
+    let next = datajson[this.state.room_data.current_room_id][1][dir];
+    data = {
+      direction: dir.toString(),
+      next_room_id: next.toString()
+    };
     try {
       let res = await axios({
         method: 'post',
@@ -282,58 +278,39 @@ export class GraphMap extends Component {
           <button onClick={() => this.pray()}>Pray</button>
         ) : null}
 
-        {/* <button onClick={() => this.movement('n')}>North</button>
-        <button onClick={() => this.movement('s')}>South</button>
-        <button onClick={() => this.movement('w')}>West</button>
-        <button onClick={() => this.movement('e')}>East</button> */}
         {this.state.room_data.exits.map(exit => (
-          <button
-            onClick={() =>
-              this.movement(
-                { exit },
-                this.data[this.state.room_data.current_room_id][1].$exit
-              )
-            }
-            key={exit}
-          >
+          <button onClick={() => this.movement({ exit })} key={exit}>
             {exit}
           </button>
         ))}
-
-//         <button
-//           onClick={() =>
-//             this.movement('n', data[this.state.room_data.current_room_id][1].n)
-//           }
-//         >
-//           North
-//         </button>
-//         <button
-//           onClick={() =>
-//             this.movement('s', data[this.state.room_data.current_room_id][1].s)
-//           }
-//         >
-//           South
-//         </button>
-//         <button
-//           onClick={() => {
-//             this.movement('w', data[this.state.room_data.current_room_id][1].w);
-//           }}
-//         >
-//           West
-//         </button>
-//         <button
-//           onClick={() =>
-//             this.movement('e', data[this.state.room_data.current_room_id][1].e)
-//           }
-//         >
-//           East
-//         </button>
-
+        {this.state.room_data.items === [] ? (
+          this.state.room_data.items.map(item => (
+            <ul key={item}>
+              <li>Items in room:</li>
+              <li>{item}</li>
+            </ul>
+          ))
+        ) : (
+          <p>This room contains no items</p>
+        )}
+        {this.state.room_data.players === [] ? (
+          this.state.room_data.players.map(player => (
+            <ul key={player}>
+              <li>Players in room:</li>
+              <li>{player}</li>
+            </ul>
+          ))
+        ) : (
+          <p>You are alone in this room</p>
+        )}
         <button onClick={() => this.examineRoom('player66')}>
           Examine #66
         </button>
         <button onClick={() => this.treasure_pickup('tiny treasure')}>
           Take tiny treasure
+        </button>
+        <button onClick={() => this.treasure_pickup('small treasure')}>
+          Take small treasure
         </button>
         <button onClick={() => this.treasure_drop('tiny treasure')}>
           Drop tiny treasure
