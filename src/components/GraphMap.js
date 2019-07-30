@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import CountdownTimer from 'react-component-countdown-timer';
-import { datajson } from '../data/data';
 import uuid from 'uuid';
 import axios from 'axios';
+
+import { datajson } from '../data/data';
+import Map from './Map.js'
+
 export class GraphMap extends Component {
   constructor(props) {
     super();
@@ -37,12 +40,15 @@ export class GraphMap extends Component {
         errors: [],
         messages: []
       },
-      examined: {}
+      examined: {},
+      coordinates: [],
+      neighbors: []
     };
   }
 
   componentDidMount() {
     this.getInit();
+    this.getCoords(datajson)
   }
 
   examineRoom = async name => {
@@ -92,6 +98,21 @@ export class GraphMap extends Component {
   //   }
 
   // }
+
+  getCoords = data => {
+    let coordinates = []
+    let neighbors = []
+    for (let key in data){
+      coordinates.push({x: data[key][0]['x'], y: data[key][0]['y']})
+      neighbors.push(data[key][1])
+    }
+    console.log('COORDINATES', coordinates)
+    console.log('neighbors', neighbors)
+    this.setState({
+      coordinates,
+      neighbors
+    })
+  }
 
   getData = async () => {
     try {
@@ -274,6 +295,10 @@ export class GraphMap extends Component {
   render() {
     return (
       <div>
+        <Map 
+          coordinates={this.state.coordinates}
+          neighbors={this.state.neighbors}
+        />
         {this.state.room_data.items.includes('shrine') ? (
           <button onClick={() => this.pray()}>Pray</button>
         ) : null}
