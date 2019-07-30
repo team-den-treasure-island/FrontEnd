@@ -127,16 +127,15 @@ export class GraphMap extends Component {
 
   movement = async (move, next_room_id = null) => {
     // TODO: Make call to another method that grabs the next room from our server --> update state
-
     let data;
     if (next_room_id !== null) {
       data = {
-        direction: move,
+        direction: Object.values(move)[0].toString(),
         next_room_id: next_room_id.toString()
       };
     } else {
       data = {
-        direction: move
+        direction: Object.values(move)[0].toString()
       };
     }
     try {
@@ -199,7 +198,7 @@ export class GraphMap extends Component {
         method: 'post',
         url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/take/`,
         headers: {
-          Authorization: 'Token 1862aa8dfe43381b4fbbdbbc5a83397e65824b54'
+          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
         },
         data
       });
@@ -221,7 +220,7 @@ export class GraphMap extends Component {
         method: 'post',
         url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/`,
         headers: {
-          Authorization: 'Token 1862aa8dfe43381b4fbbdbbc5a83397e65824b54'
+          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
         },
         data
       });
@@ -242,10 +241,15 @@ export class GraphMap extends Component {
         {this.state.room_data.items.includes('shrine') ? (
           <button onClick={() => this.pray()}>Pray</button>
         ) : null}
-        <button onClick={() => this.movement('n')}>North</button>
+        {/* <button onClick={() => this.movement('n')}>North</button>
         <button onClick={() => this.movement('s')}>South</button>
         <button onClick={() => this.movement('w')}>West</button>
-        <button onClick={() => this.movement('e')}>East</button>
+        <button onClick={() => this.movement('e')}>East</button> */}
+        {this.state.room_data.exits.map(exit => (
+          <button onClick={() => this.movement({ exit })} key={exit}>
+            {exit}
+          </button>
+        ))}
         <button onClick={() => this.examineRoom('player66')}>
           Examine #66
         </button>
