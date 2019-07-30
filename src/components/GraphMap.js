@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
+import CountdownTimer from 'react-component-countdown-timer';
 import { data } from '../data/data';
+import uuid from 'uuid';
 import axios from 'axios';
 export class GraphMap extends Component {
   constructor(props) {
     super();
 
     this.state = {
-      cooldown: null,
+      id: uuid,
+      cooldown: 0,
       inventory: [],
       next_room_id: null,
       room_data: {
@@ -183,8 +186,10 @@ export class GraphMap extends Component {
         data
       });
       console.log(res.data);
+      console.table('State', this.state.cooldown);
 
       this.setState({
+        id: uuid,
         cooldown: res.data.cooldown,
         room_data: {
           current_room_id: res.data.room_id,
@@ -201,6 +206,7 @@ export class GraphMap extends Component {
           terrain: res.data.terrain
         }
       });
+      console.table('State', this.state.cooldown);
 
       // setTimeout(() => {
       //   this.getData();
@@ -291,9 +297,9 @@ export class GraphMap extends Component {
           South
         </button>
         <button
-          onClick={() =>
-            this.movement('w', data[this.state.room_data.current_room_id][1].w)
-          }
+          onClick={() => {
+            this.movement('w', data[this.state.room_data.current_room_id][1].w);
+          }}
         >
           West
         </button>
@@ -315,7 +321,11 @@ export class GraphMap extends Component {
         </button>
         <div>
           {this.state.room_data.exits.map(exit => (
-            <p key={exit}>{exit}</p>
+            <p key={exit}>
+              {exit}
+
+              <CountdownTimer key={exit} count={this.state.cooldown} />
+            </p>
           ))}
         </div>
       </div>
