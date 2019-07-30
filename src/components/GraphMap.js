@@ -246,7 +246,15 @@ export class GraphMap extends Component {
         <button onClick={() => this.movement('w')}>West</button>
         <button onClick={() => this.movement('e')}>East</button> */}
         {this.state.room_data.exits.map(exit => (
-          <button onClick={() => this.movement({ exit })} key={exit}>
+          <button
+            onClick={() =>
+              this.movement(
+                { exit },
+                this.data[this.state.room_data.current_room_id][1].$exit
+              )
+            }
+            key={exit}
+          >
             {exit}
           </button>
         ))}
