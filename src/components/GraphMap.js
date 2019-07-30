@@ -41,7 +41,8 @@ export class GraphMap extends Component {
         messages: []
       },
       examined: {},
-      coordinates: []
+      coordinates: [],
+      neighbors: []
     };
   }
 
@@ -100,13 +101,16 @@ export class GraphMap extends Component {
 
   getCoords = data => {
     let coordinates = []
+    let neighbors = []
     for (let key in data){
       coordinates.push({x: data[key][0]['x'], y: data[key][0]['y']})
-      console.log(data[key[0]])
+      neighbors.push(data[key][1])
     }
     console.log('COORDINATES', coordinates)
+    console.log('neighbors', neighbors)
     this.setState({
-      coordinates
+      coordinates,
+      neighbors
     })
   }
 
@@ -291,7 +295,10 @@ export class GraphMap extends Component {
   render() {
     return (
       <div>
-        <Map coordinates={this.state.coordinates}/>
+        <Map 
+          coordinates={this.state.coordinates}
+          neighbors={this.state.neighbors}
+        />
         {this.state.room_data.items.includes('shrine') ? (
           <button onClick={() => this.pray()}>Pray</button>
         ) : null}
