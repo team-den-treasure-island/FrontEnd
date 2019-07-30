@@ -46,7 +46,7 @@ export class GraphMap extends Component {
   }
 
   examineRoom = async name => {
-    let data = { name };
+    let data = { name: name.player };
 
     try {
       let res = await axios({
@@ -228,7 +228,7 @@ export class GraphMap extends Component {
   };
 
   treasure_pickup = async name => {
-    let data = { name };
+    let data = { name: name.item };
     try {
       let res = await axios({
         method: 'post',
@@ -283,21 +283,25 @@ export class GraphMap extends Component {
             {exit}
           </button>
         ))}
-        {this.state.room_data.items === [] ? (
+        {this.state.room_data.items !== [] ? (
           this.state.room_data.items.map(item => (
             <ul key={item}>
               <li>Items in room:</li>
-              <li>{item}</li>
+              <button onClick={() => this.treasure_pickup({ item })}>
+                pick up: {item}
+              </button>
             </ul>
           ))
         ) : (
           <p>This room contains no items</p>
         )}
-        {this.state.room_data.players === [] ? (
+        {this.state.room_data.players !== [] ? (
           this.state.room_data.players.map(player => (
             <ul key={player}>
               <li>Players in room:</li>
-              <li>{player}</li>
+              <button onClick={() => this.examineRoom({ player })}>
+                {player}
+              </button>
             </ul>
           ))
         ) : (
