@@ -46,7 +46,7 @@ export class GraphMap extends Component {
   }
 
   examineRoom = async name => {
-    let data = { name };
+    let data = { name: name.player };
 
     try {
       let res = await axios({
@@ -228,7 +228,7 @@ export class GraphMap extends Component {
   };
 
   treasure_pickup = async name => {
-    let data = { name };
+    let data = { name: name.item };
     try {
       let res = await axios({
         method: 'post',
@@ -283,35 +283,30 @@ export class GraphMap extends Component {
             {exit}
           </button>
         ))}
-        {this.state.room_data.items === [] ? (
+        {this.state.room_data.items.length !== 0 ? (
           this.state.room_data.items.map(item => (
             <ul key={item}>
               <li>Items in room:</li>
-              <li>{item}</li>
+              <button onClick={() => this.treasure_pickup({ item })}>
+                pick up: {item}
+              </button>
             </ul>
           ))
         ) : (
           <p>This room contains no items</p>
         )}
-        {this.state.room_data.players === [] ? (
+        {this.state.room_data.players.length !== 0 ? (
           this.state.room_data.players.map(player => (
             <ul key={player}>
               <li>Players in room:</li>
-              <li>{player}</li>
+              <button onClick={() => this.examineRoom({ player })}>
+                {player}
+              </button>
             </ul>
           ))
         ) : (
           <p>You are alone in this room</p>
         )}
-        <button onClick={() => this.examineRoom('player66')}>
-          Examine #66
-        </button>
-        <button onClick={() => this.treasure_pickup('tiny treasure')}>
-          Take tiny treasure
-        </button>
-        <button onClick={() => this.treasure_pickup('small treasure')}>
-          Take small treasure
-        </button>
         <button onClick={() => this.treasure_drop('tiny treasure')}>
           Drop tiny treasure
         </button>
@@ -319,7 +314,6 @@ export class GraphMap extends Component {
           {this.state.room_data.exits.map(exit => (
             <p key={exit}>
               {exit}
-
               <CountdownTimer key={exit} count={this.state.cooldown} />
             </p>
           ))}
