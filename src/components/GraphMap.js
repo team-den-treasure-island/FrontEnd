@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import CountdownTimer from 'react-component-countdown-timer';
 import uuid from 'uuid';
 import axios from 'axios';
+import Styled from 'styled-components'
 
 import { datajson } from '../data/data';
 import Map from './Map.js';
+import Players from './Players.js'
 
 export class GraphMap extends Component {
   constructor(props) {
@@ -295,60 +297,85 @@ export class GraphMap extends Component {
 
   render() {
     return (
-      <div>
-        <Map
-          nextRoom={this.state.next_room_id}
-          roomId={this.state.room_data.current_room_id}
-          coordinates={this.state.coordinates}
-          neighbors={this.state.neighbors}
-        />
-        {this.state.room_data.items.includes('shrine') ? (
-          <button onClick={() => this.pray()}>Pray</button>
-        ) : null}
+      <MainContainer>
+        <MapWrapper>
+          <Map
+            nextRoom={this.state.next_room_id}
+            roomId={this.state.room_data.current_room_id}
+            coordinates={this.state.coordinates}
+            neighbors={this.state.neighbors}
+          />
+        </MapWrapper>
+        <ControlContainer>
+          {this.state.room_data.items.includes('shrine') ? (
+            <button onClick={() => this.pray()}>Pray</button>
+            ) : null}
 
-        {this.state.room_data.exits.map(exit => (
-          <button onClick={() => this.movement({ exit })} key={exit}>
-            {exit}
-          </button>
-        ))}
-        {this.state.room_data.items.length !== 0 ? (
-          this.state.room_data.items.map(item => (
-            <ul key={item}>
-              <li>Items in room:</li>
-              <button onClick={() => this.treasure_pickup({ item })}>
-                pick up: {item}
-              </button>
-            </ul>
-          ))
-        ) : (
-          <p>This room contains no items</p>
-        )}
-        {this.state.room_data.players.length !== 0 ? (
-          this.state.room_data.players.map(player => (
-            <ul key={player}>
-              <li>Players in room:</li>
-              <button onClick={() => this.examineRoom({ player })}>
-                {player}
-              </button>
-            </ul>
-          ))
-        ) : (
-          <p>You are alone in this room</p>
-        )}
-        <button onClick={() => this.treasure_drop('tiny treasure')}>
-          Drop tiny treasure
-        </button>
-        <div>
           {this.state.room_data.exits.map(exit => (
-            <p key={exit}>
+            <button onClick={() => this.movement({ exit })} key={exit}>
               {exit}
-              <CountdownTimer key={exit} count={this.state.cooldown} />
-            </p>
+            </button>
           ))}
-        </div>
-      </div>
+          {this.state.room_data.items.length !== 0 ? (
+            this.state.room_data.items.map(item => (
+              <ul key={item}>
+                <li>Items in room:</li>
+                <button onClick={() => this.treasure_pickup({ item })}>
+                  pick up: {item}
+                </button>
+              </ul>
+            ))
+            ) : (
+              <p>This room contains no items</p>
+              )}
+
+          <Players 
+            players={this.state.room_data.players}
+            examineRoom={() => this.examineRoom()}
+            currentRoom={this.state.room_data.current_room_id}
+          />
+
+          <button onClick={() => this.treasure_drop('tiny treasure')}>
+            Drop tiny treasure
+          </button>
+          <CountdownTimer count={this.state.cooldown} />
+          {/* <div>
+            {this.state.room_data.exits.map(exit => (
+              <p key={exit}>
+                {exit}
+                <CountdownTimer key={exit} count={this.state.cooldown} />
+              </p>
+            ))}
+          </div> */}
+        </ControlContainer>
+      </MainContainer>
     );
   }
 }
+
+const MainContainer = Styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`
+
+const MapWrapper = Styled.div`
+  width: 100%;
+  /* border: 2px solid yellow; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ControlContainer = Styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px;
+  max-height: 100%;
+  border-left: 2px solid black;
+`
 
 export default GraphMap;

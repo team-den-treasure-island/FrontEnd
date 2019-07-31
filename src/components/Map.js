@@ -1,5 +1,5 @@
 import React from 'react';
-// import Styled from 'styled-components'
+import Styled from 'styled-components'
 import { useRef, useEffect } from 'react';
 
 const Map = props => {
