@@ -28,17 +28,9 @@ const Map = props => {
     };
 
     for (let room in coordinates) {
-      // console.log(coordinates[room]['x'])
 
       let widthBox = 10;
       let heightBox = 10;
-
-      context.fillRect(
-        transX(coordinates[room]['x']),
-        transY(coordinates[room]['y']),
-        widthBox,
-        heightBox
-      );
 
       if (neighbors[room]['n']) {
         let direction = neighbors[room]['n'];
@@ -61,7 +53,7 @@ const Map = props => {
         context.moveTo(
           transX(coordinates[room]['x']) + widthBox / 2,
           transY(coordinates[room]['y']) + widthBox
-        );
+          );
         context.lineTo(
           transX(coordinates[direction]['x']) + widthBox / 2,
           transY(coordinates[direction]['y']) + widthBox
@@ -74,12 +66,12 @@ const Map = props => {
         context.moveTo(
           transX(coordinates[room]['x']) + widthBox,
           transY(coordinates[room]['y']) + widthBox / 2
-        );
+          );
         context.lineTo(
           transX(coordinates[direction]['x']),
           transY(coordinates[direction]['y']) + widthBox / 2
-        );
-        context.stroke();
+          );
+          context.stroke();
       }
       if (neighbors[room]['w']) {
         let direction = neighbors[room]['w'];
@@ -87,22 +79,29 @@ const Map = props => {
         context.moveTo(
           transX(coordinates[room]['x']),
           transY(coordinates[room]['y']) + widthBox / 2
-        );
-        context.lineTo(
+          );
+          context.lineTo(
           transX(coordinates[direction]['x']) + 5,
           transY(coordinates[direction]['y']) + widthBox / 2
-        );
-        context.stroke();
-      }
-    }
+          );
+          context.stroke();
+        }
 
-    context.fillRect(
-      transX(60),
-      transY(50),
-      10,
-      10,
-      (context.fillStyle = 'red')
-    );
+      if (coordinates[room]['id'] == roomId){
+        context.fillStyle = 'red'
+        console.log('Coloring a red square...')
+      } else {
+        context.fillStyle = 'black'
+      }
+
+      context.fillRect(
+        transX(coordinates[room]['x']),
+        transY(coordinates[room]['y']),
+        widthBox,
+        heightBox
+      );
+      context.fillStyle = 'black'
+    }
   }, [coordinates, roomId, nextRoom]);
 
   return (
