@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
-import CountdownTimer from 'react-component-countdown-timer';
+// import CountdownTimer from 'react-component-countdown-timer';
 import uuid from 'uuid';
 import axios from 'axios';
 import Styled from 'styled-components'
+import Loader from 'react-loader-spinner'
 
 import { datajson } from '../data/data';
 import Map from './Map.js';
 import Players from './Players.js'
+import Navigation from './Navigation.js'
 
 export class GraphMap extends Component {
   constructor(props) {
     super();
 
+    this.interval = null
+
     this.state = {
       id: uuid,
       cooldown: 0,
+      activeCooldown: false,
       inventory: [],
       next_room_id: -1,
       room_data: {
@@ -51,6 +56,23 @@ export class GraphMap extends Component {
   componentDidMount() {
     this.getInit();
     this.getCoords(datajson);
+    if (this.state.activeCooldown){
+      this.checkCooldown()
+    }
+  }
+
+  componentDidUpdate() {
+    console.log('Cooldown:', this.state.cooldown)
+    clearInterval(this.interval)
+    if (this.state.cooldown > 0) {
+      this.interval = setInterval(() => this.setState({
+        cooldown: this.state.cooldown - 1
+      }), 1000)
+    } else if (this.state.activeCooldown === true) {
+      this.setState({
+        activeCooldown: false
+      })
+    }
   }
 
   examineRoom = async name => {
@@ -165,6 +187,7 @@ export class GraphMap extends Component {
 
       this.setState({
         cooldown: res.data.cooldown,
+        activeCooldown: true,
         room_data: {
           current_room_id: res.data.room_id,
           previous_room_id: this.state.room_data.current_room_id,
@@ -184,6 +207,15 @@ export class GraphMap extends Component {
       console.log(err);
     }
   };
+
+  checkCooldown = () => {
+    console.log('COOLING OFF...')
+    setTimeout(() => {
+      console.log('Cooldown:', this.state.cooldown)
+      console.log('Setting activeCooldown to false')
+      this.setState({ activeCooldown: false })
+    }, this.state.cooldown * 1000)
+  }
 
   movement = async move => {
     // TODO: Make call to another method that grabs the next room from our server --> update state
@@ -209,6 +241,7 @@ export class GraphMap extends Component {
       this.setState({
         id: uuid,
         cooldown: res.data.cooldown,
+        activeCooldown: true,
         next_room_id: next,
         room_data: {
           current_room_id: res.data.room_id,
@@ -235,21 +268,21 @@ export class GraphMap extends Component {
     }
   };
 
-  pray = async () => {
-    try {
-      let res = await axios({
-        method: 'post',
-        url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/`,
-        headers: {
-          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
-        }
-      });
-      // TODO: When we find a shrine figure out the res data
-      console.log(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // pray = async () => {
+  //   try {
+  //     let res = await axios({
+  //       method: 'post',
+  //       url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/pray/`,
+  //       headers: {
+  //         Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
+  //       }
+  //     });
+  //     // TODO: When we find a shrine figure out the res data
+  //     console.log(res.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   treasure_pickup = async name => {
     let data = { name: name.item };
@@ -306,47 +339,52 @@ export class GraphMap extends Component {
             neighbors={this.state.neighbors}
           />
         </MapWrapper>
-        <ControlContainer>
-          {this.state.room_data.items.includes('shrine') ? (
-            <button onClick={() => this.pray()}>Pray</button>
-            ) : null}
+        <ControlContainer >
 
-          {this.state.room_data.exits.map(exit => (
-            <button onClick={() => this.movement({ exit })} key={exit}>
-              {exit}
-            </button>
-          ))}
-          {this.state.room_data.items.length !== 0 ? (
-            this.state.room_data.items.map(item => (
-              <ul key={item}>
-                <li>Items in room:</li>
-                <button onClick={() => this.treasure_pickup({ item })}>
-                  pick up: {item}
-                </button>
-              </ul>
-            ))
-            ) : (
-              <p>This room contains no items</p>
-              )}
+          {this.state.activeCooldown && (
+            <>
+              <h1>Cooldown: {this.state.cooldown}</h1>
+              <Loader type="Puff" color="#ff1f1f" height="150" width="150" />
+            </>
+          )}
 
-          <Players 
-            players={this.state.room_data.players}
-            examineRoom={() => this.examineRoom()}
-            currentRoom={this.state.room_data.current_room_id}
-          />
+          {!this.state.activeCooldown && (
+            <>
+              <Navigation 
+                exits={this.state.room_data.exits}
+                movement={(exit) => this.movement(exit)}
+              />
 
-          <button onClick={() => this.treasure_drop('tiny treasure')}>
-            Drop tiny treasure
-          </button>
-          <CountdownTimer count={this.state.cooldown} />
-          {/* <div>
-            {this.state.room_data.exits.map(exit => (
-              <p key={exit}>
-                {exit}
-                <CountdownTimer key={exit} count={this.state.cooldown} />
-              </p>
-            ))}
-          </div> */}
+              {this.state.room_data.items.length !== 0 ? (
+                this.state.room_data.items.map(item => (
+                  <ul key={item}>
+                    <li>Items in room:</li>
+                    <button onClick={() => this.treasure_pickup({ item })}>
+                      pick up: {item}
+                    </button>
+                  </ul>
+                ))
+                ) : (
+                  <p>This room contains no items</p>
+                  )}
+
+              <Players 
+                players={this.state.room_data.players}
+                examineRoom={(name) => this.examineRoom(name)}
+                currentRoom={this.state.room_data.current_room_id}
+              />
+
+              <button onClick={() => this.treasure_drop('tiny treasure')}>
+                Drop tiny treasure
+              </button>
+              {/* <CountdownTimer 
+                count={this.state.cooldown} 
+                hideDay={true}
+                hideHours={true}
+                onEnd={() => this.checkCooldown()}
+              /> */}
+            </>
+          )}
         </ControlContainer>
       </MainContainer>
     );
