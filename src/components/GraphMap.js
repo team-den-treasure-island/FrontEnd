@@ -2,19 +2,34 @@ import React, { Component } from 'react';
 // import CountdownTimer from 'react-component-countdown-timer';
 import uuid from 'uuid';
 import axios from 'axios';
-import Styled from 'styled-components'
-import Loader from 'react-loader-spinner'
+import Styled from 'styled-components';
+import Loader from 'react-loader-spinner';
 
 import { datajson } from '../data/data';
 import Map from './Map.js';
-import Players from './Players.js'
-import Navigation from './Navigation.js'
+import Players from './Players.js';
+import Navigation from './Navigation.js';
+
+const idToName = {
+  '4b0963db718e09fbe815d75150d98d79d9a243bb': 'kittendaddy69',
+  '5d57a24ad7c366fb7c3de0db9a2d7f1ccd6aaacf': 'anon_denlife_loyalist',
+  '11fca1909b41121878367faa97cc6e92a3286cf0': 'DenLifeZero',
+  '1862aa8dfe43381b4fbbdbbc5a83397e65824b54': 'goose_h8r',
+  '203ef3ef95a3e8c6ef25faa74f40cc384d6378ec': 'strugglebusallday'
+};
+const nameToId = {
+  kittendaddy69: '4b0963db718e09fbe815d75150d98d79d9a243bb',
+  anon_denlife_loyalist: '5d57a24ad7c366fb7c3de0db9a2d7f1ccd6aaacf',
+  DenLifeZero: '11fca1909b41121878367faa97cc6e92a3286cf0',
+  goose_h8r: '1862aa8dfe43381b4fbbdbbc5a83397e65824b54',
+  strugglebusallday: '203ef3ef95a3e8c6ef25faa74f40cc384d6378ec'
+};
 
 export class GraphMap extends Component {
   constructor(props) {
     super();
 
-    this.interval = null
+    this.interval = null;
 
     this.state = {
       id: uuid,
@@ -22,6 +37,9 @@ export class GraphMap extends Component {
       activeCooldown: false,
       inventory: [],
       next_room_id: -1,
+      characters: Object.keys(nameToId),
+      characterIds: Object.values(nameToId),
+      currentPlayer: null,
       room_data: {
         current_room_id: -1,
         previous_room_id: null,
@@ -54,28 +72,32 @@ export class GraphMap extends Component {
   }
 
   componentDidMount() {
-    this.getInit();
+    // this.getInit();
     this.getCoords(datajson);
-    if (this.state.activeCooldown){
-      this.checkCooldown()
+    if (this.state.activeCooldown) {
+      this.checkCooldown();
     }
   }
 
   componentDidUpdate() {
-    console.log('Cooldown:', this.state.cooldown)
-    clearInterval(this.interval)
+    console.log('Cooldown:', this.state.cooldown);
+    clearInterval(this.interval);
     if (this.state.cooldown > 0) {
-      this.interval = setInterval(() => this.setState({
-        cooldown: this.state.cooldown - 1
-      }), 1000)
+      this.interval = setInterval(
+        () =>
+          this.setState({
+            cooldown: this.state.cooldown - 1
+          }),
+        1000
+      );
     } else if (this.state.activeCooldown === true) {
       this.setState({
         activeCooldown: false
-      })
+      });
     }
   }
 
-  examineRoom = async name => {
+  examineRoom = async (name, token = this.state.currentPlayer) => {
     let data = { name: name.player };
 
     try {
@@ -83,7 +105,7 @@ export class GraphMap extends Component {
         method: 'post',
         url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/examine/`,
         headers: {
-          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
+          Authorization: `Token ${token}`
         },
         data
       });
@@ -104,25 +126,6 @@ export class GraphMap extends Component {
     }
   };
 
-  // TODO: Figure out what/where the name changer is!!
-  // nameChanger = async (newName) => {
-  //   let data = {newName}
-
-  //   try {
-  //     let res = await axios({
-  //       method: 'post',
-  //       url: 'https://lambda-treasure-hunt.herokuapp.com/api/adv/change_name/',
-  //       headers: {
-  //         Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
-  //       }
-  //     });
-  //     this.setState({
-  //       name: res.data.
-  //     })
-  //   }
-
-  // }
-
   getCoords = data => {
     let coordinates = [];
     let neighbors = [];
@@ -138,14 +141,14 @@ export class GraphMap extends Component {
     });
   };
 
-  getData = async () => {
+  getData = async token => {
     try {
       let res = await axios({
         url: 'https://lambda-treasure-hunt.herokuapp.com/api/adv/status/',
         method: 'post',
         timeout: 8000,
         headers: {
-          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
+          Authorization: `Token ${token}`
         }
       });
       if (res.status === 200) {
@@ -174,13 +177,13 @@ export class GraphMap extends Component {
     }
   };
 
-  getInit = async () => {
+  getInit = async token => {
     try {
       let res = await axios({
         method: 'get',
         url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/init/`,
         headers: {
-          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
+          Authorization: `Token ${token}`
         }
       });
       console.log(res.data);
@@ -204,20 +207,23 @@ export class GraphMap extends Component {
         }
       });
     } catch (err) {
+      // TODO error handling for 400 cooldown not happening
       console.log(err);
     }
   };
 
   checkCooldown = () => {
-    console.log('COOLING OFF...')
+    console.log('COOLING OFF...');
     setTimeout(() => {
-      console.log('Cooldown:', this.state.cooldown)
-      console.log('Setting activeCooldown to false')
-      this.setState({ activeCooldown: false })
-    }, this.state.cooldown * 1000)
-  }
+      console.log('Cooldown:', this.state.cooldown);
+      console.log('Setting activeCooldown to false');
+      this.setState({ activeCooldown: false });
+    }, this.state.cooldown * 1000);
+  };
 
-  movement = async move => {
+  movement = async (move, token = this.state.currentPlayer) => {
+    console.log('movement token', token);
+    console.log('movement currentplayer', this.state.currentPlayer);
     // TODO: Make call to another method that grabs the next room from our server --> update state
     let data;
     let dir = Object.values(move)[0];
@@ -231,7 +237,7 @@ export class GraphMap extends Component {
         method: 'post',
         url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/move/`,
         headers: {
-          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
+          Authorization: `Token ${token}`
         },
         data
       });
@@ -284,14 +290,14 @@ export class GraphMap extends Component {
   //   }
   // };
 
-  treasure_pickup = async name => {
+  treasure_pickup = async (name, token = this.state.currentPlayer) => {
     let data = { name: name.item };
     try {
       let res = await axios({
         method: 'post',
         url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/take/`,
         headers: {
-          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
+          Authorization: `Token ${token}`
         },
         data
       });
@@ -306,14 +312,14 @@ export class GraphMap extends Component {
     }
   };
 
-  treasure_drop = async name => {
+  treasure_drop = async (name, token = this.state.currentPlayer) => {
     let data = { name };
     try {
       let res = await axios({
         method: 'post',
         url: `https://lambda-treasure-hunt.herokuapp.com/api/adv/drop/`,
         headers: {
-          Authorization: 'Token 4b0963db718e09fbe815d75150d98d79d9a243bb'
+          Authorization: `Token ${token}`
         },
         data
       });
@@ -328,6 +334,39 @@ export class GraphMap extends Component {
     }
   };
 
+  stopAutopilot = async value => {
+    let name = idToName[value];
+    let data = { name, explore_mode: false };
+    try {
+      let res = await axios({
+        method: 'put',
+        url: `https://gentle-dusk-98459.herokuapp.com/api/players/${name}/`,
+        // url: `https://gentle-dusk-98459.herokuapp.com/api/players/strugglebusallday/`,
+        headers: {
+          Authorization: `Token 19b25831b9ab279bb5952dce42810fff6f4e2314`,
+          'Content-type': 'application/json'
+        },
+        data
+      });
+      console.log('RESPOINSE!!!!!', res);
+      this.setState({
+        cooldown: res.data.cooldown,
+        currentPlayer: value
+      });
+      console.log('new cooldown', this.state.cooldown);
+      setTimeout(() => {
+        this.setState({ activeCooldown: false });
+        this.getInit(value);
+      }, this.state.cooldown * 1000);
+    } catch (err) {
+      console.log(err);
+    }
+    // TODO:
+    // send api to backend to turn off autopilot for specific user id
+    // Cooldown
+    // this.getInit(value);
+  };
+
   render() {
     return (
       <MainContainer>
@@ -339,20 +378,19 @@ export class GraphMap extends Component {
             neighbors={this.state.neighbors}
           />
         </MapWrapper>
-        <ControlContainer >
-
+        <ControlContainer>
           {this.state.activeCooldown && (
             <>
               <h1>Cooldown: {this.state.cooldown}</h1>
-              <Loader type="Puff" color="#ff1f1f" height="150" width="150" />
+              <Loader type='Puff' color='#ff1f1f' height='150' width='150' />
             </>
           )}
 
           {!this.state.activeCooldown && (
             <>
-              <Navigation 
+              <Navigation
                 exits={this.state.room_data.exits}
-                movement={(exit) => this.movement(exit)}
+                movement={exit => this.movement(exit)}
               />
 
               {this.state.room_data.items.length !== 0 ? (
@@ -364,25 +402,30 @@ export class GraphMap extends Component {
                     </button>
                   </ul>
                 ))
-                ) : (
-                  <p>This room contains no items</p>
-                  )}
+              ) : (
+                <p>This room contains no items</p>
+              )}
 
-              <Players 
+              <Players
                 players={this.state.room_data.players}
-                examineRoom={(name) => this.examineRoom(name)}
+                examineRoom={name => this.examineRoom(name)}
                 currentRoom={this.state.room_data.current_room_id}
               />
 
               <button onClick={() => this.treasure_drop('tiny treasure')}>
                 Drop tiny treasure
               </button>
-              {/* <CountdownTimer 
-                count={this.state.cooldown} 
-                hideDay={true}
-                hideHours={true}
-                onEnd={() => this.checkCooldown()}
-              /> */}
+
+              <select
+                onChange={e => {
+                  this.stopAutopilot(e.target.value);
+                }}
+              >
+                <option>Choose your player!</option>
+                {this.state.characters.map(chars => (
+                  <option value={nameToId[chars]}>{chars}</option>
+                ))}
+              </select>
             </>
           )}
         </ControlContainer>
@@ -396,7 +439,7 @@ const MainContainer = Styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-`
+`;
 
 const MapWrapper = Styled.div`
   width: 100%;
@@ -404,7 +447,7 @@ const MapWrapper = Styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const ControlContainer = Styled.div`
   display: flex;
@@ -414,6 +457,6 @@ const ControlContainer = Styled.div`
   padding: 20px;
   max-height: 100%;
   border-left: 2px solid black;
-`
+`;
 
 export default GraphMap;
