@@ -1,26 +1,26 @@
-import React from 'react'
-import Styled from 'styled-components'
+import React from 'react';
+import Styled from 'styled-components';
 
 const Navigation = props => {
-
-  const { exits, movement } = props
+  const { exits, movement } = props;
 
   return (
     <NavigationContainer>
+      {/* {!exits ? (
+        <> */}
       <p>Available Moves:</p>
       <ButtonsContainer>
         {exits.map(exit => (
-          <NavButton 
-          onClick={() => movement({ exit })} 
-          key={exit}
-          >
+          <NavButton onClick={() => movement({ exit })} key={exit}>
             {exit}
           </NavButton>
         ))}
       </ButtonsContainer>
+      {/* </>
+      ) : null} */}
     </NavigationContainer>
-  )
-}
+  );
+};
 
 const NavigationContainer = Styled.div`
   display: flex;
@@ -34,7 +34,7 @@ const NavigationContainer = Styled.div`
   p {
     margin: 0 0 10px 0;
   }
-`
+`;
 
 const ButtonsContainer = Styled.div`
   display: flex;
@@ -43,7 +43,7 @@ const ButtonsContainer = Styled.div`
   /* border: 2px solid yellow; */
   width: 100%;
   height: 100%;
-`
+`;
 
 const NavButton = Styled.button`
   display: flex;
@@ -59,6 +59,6 @@ const NavButton = Styled.button`
     border: 1px solid black;
     transition: .2s;
   }
-`
+`;
 
-export default Navigation
+export default Navigation;

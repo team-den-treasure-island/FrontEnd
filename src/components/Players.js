@@ -1,29 +1,35 @@
-import React from 'react'
-import Styled from 'styled-components'
+import React from 'react';
+import Styled from 'styled-components';
 
 const Players = props => {
-
-  const { players, examineRoom, currentRoom } = props
+  const { players, examineRoom, currentRoom } = props;
   return (
     <PlayerContainer>
-      <p>Players in Room {currentRoom}:</p>
-      <PlayerList>
-        {players.length !== 0 ? (
-          players.map(player => (
-            <PlayerButton 
-              onClick={() => examineRoom({ player })}
-              key={player}
-            >
-              {player}
-            </PlayerButton>
-          ))
-        ) : (
-          <p>You are alone in this room</p>
-        )}
-      </PlayerList>
+      {currentRoom < 0 ? (
+        <p>Please select a player!</p>
+      ) : (
+        <>
+          <p>You are in Room Number: {currentRoom}</p>
+          <p>Players with you:</p>
+          <PlayerList>
+            {players.length !== 0 ? (
+              players.map(player => (
+                <PlayerButton
+                  onClick={() => examineRoom({ player })}
+                  key={player}
+                >
+                  {player}
+                </PlayerButton>
+              ))
+            ) : (
+              <p>You are alone in this room</p>
+            )}
+          </PlayerList>
+        </>
+      )}
     </PlayerContainer>
-  )
-}
+  );
+};
 
 const PlayerContainer = Styled.div`
   display: flex;
@@ -39,7 +45,7 @@ const PlayerContainer = Styled.div`
   p {
     margin: 0 0 10px 0;
   }
-`
+`;
 
 const PlayerList = Styled.div`
   display: flex;
@@ -51,7 +57,7 @@ const PlayerList = Styled.div`
   p {
     font-size: 12px;
   }
-`
+`;
 
 const PlayerButton = Styled.button`
   display: flex;
@@ -67,6 +73,6 @@ const PlayerButton = Styled.button`
     border: 1px solid black;
     transition: .2s;
   }
-`
+`;
 
-export default Players
+export default Players;

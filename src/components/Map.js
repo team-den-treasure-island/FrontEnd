@@ -1,5 +1,5 @@
 import React from 'react';
-import Styled from 'styled-components'
+// import Styled from 'styled-components';
 import { useRef, useEffect } from 'react';
 
 const Map = props => {
@@ -28,7 +28,6 @@ const Map = props => {
     };
 
     for (let room in coordinates) {
-
       let widthBox = 10;
       let heightBox = 10;
 
@@ -53,7 +52,7 @@ const Map = props => {
         context.moveTo(
           transX(coordinates[room]['x']) + widthBox / 2,
           transY(coordinates[room]['y']) + widthBox
-          );
+        );
         context.lineTo(
           transX(coordinates[direction]['x']) + widthBox / 2,
           transY(coordinates[direction]['y']) + widthBox
@@ -66,12 +65,12 @@ const Map = props => {
         context.moveTo(
           transX(coordinates[room]['x']) + widthBox,
           transY(coordinates[room]['y']) + widthBox / 2
-          );
+        );
         context.lineTo(
           transX(coordinates[direction]['x']),
           transY(coordinates[direction]['y']) + widthBox / 2
-          );
-          context.stroke();
+        );
+        context.stroke();
       }
       if (neighbors[room]['w']) {
         let direction = neighbors[room]['w'];
@@ -79,19 +78,19 @@ const Map = props => {
         context.moveTo(
           transX(coordinates[room]['x']),
           transY(coordinates[room]['y']) + widthBox / 2
-          );
-          context.lineTo(
+        );
+        context.lineTo(
           transX(coordinates[direction]['x']) + 5,
           transY(coordinates[direction]['y']) + widthBox / 2
-          );
-          context.stroke();
-        }
+        );
+        context.stroke();
+      }
 
-      if (coordinates[room]['id'] == roomId){
-        context.fillStyle = 'red'
-        console.log('Coloring a red square...')
+      if (coordinates[room]['id'].toString() === roomId.toString()) {
+        context.fillStyle = 'red';
+        console.log('Coloring a red square...');
       } else {
-        context.fillStyle = 'black'
+        context.fillStyle = 'black';
       }
 
       context.fillRect(
@@ -100,9 +99,9 @@ const Map = props => {
         widthBox,
         heightBox
       );
-      context.fillStyle = 'black'
+      context.fillStyle = 'black';
     }
-  }, [coordinates, roomId, nextRoom]);
+  }, [coordinates, roomId, nextRoom, neighbors]);
 
   return (
     <>
