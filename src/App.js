@@ -1,13 +1,23 @@
 import React from 'react';
+import Styled from 'styled-components'
 
 import GraphMap from './components/GraphMap';
 
 function App() {
   return (
-    <div className="App">
+    <AppContainer>
       <GraphMap />
-    </div>
+    </AppContainer>
   );
 }
+
+const AppContainer = Styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-image: linear-gradient(#90ddf0, #062F32);
+  height: 100vh;
+`
 
 export default App;
