@@ -9,6 +9,7 @@ import { datajson } from '../data/data';
 import Map from './Map.js';
 import Players from './Players.js';
 import Navigation from './Navigation.js';
+import Items from './Items.js'
 
 const idToName = {
   '4b0963db718e09fbe815d75150d98d79d9a243bb': 'kittendaddy69',
@@ -393,7 +394,11 @@ export class GraphMap extends Component {
                 movement={exit => this.movement(exit)}
               />
 
-              {this.state.room_data.items.length !== 0 ? (
+              <Items 
+                items={this.state.room_data.items}
+                pickup={(item) => this.treasure_pickup(item)}
+              />
+              {/* {this.state.room_data.items.length !== 0 ? (
                 this.state.room_data.items.map(item => (
                   <ul key={item}>
                     <li>Items in room:</li>
@@ -404,7 +409,7 @@ export class GraphMap extends Component {
                 ))
               ) : (
                 <p>This room contains no items</p>
-              )}
+              )} */}
 
               <Players
                 players={this.state.room_data.players}
