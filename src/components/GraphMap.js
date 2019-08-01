@@ -34,6 +34,7 @@ export class GraphMap extends Component {
     this.state = {
       id: uuid,
       cooldown: 0,
+      playerTracker: [],
       activeCooldown: false,
       inventory: [],
       next_room_id: -1,
@@ -77,6 +78,9 @@ export class GraphMap extends Component {
     if (this.state.activeCooldown) {
       this.checkCooldown();
     }
+    setInterval(() => {
+      this.playerTracker();
+    }, 4000);
   }
 
   componentDidUpdate() {
@@ -133,8 +137,7 @@ export class GraphMap extends Component {
       coordinates.push({ x: data[key][0]['x'], y: data[key][0]['y'], id: key });
       neighbors.push(data[key][1]);
     }
-    console.log('COORDINATES', coordinates);
-    console.log('neighbors', neighbors);
+
     this.setState({
       coordinates,
       neighbors
@@ -273,6 +276,22 @@ export class GraphMap extends Component {
       console.error(err);
     }
   };
+  playerTracker = async token => {
+    try {
+      let res = await axios({
+        method: 'get',
+        url: `https://gentle-dusk-98459.herokuapp.com/api/players/`
+      });
+
+      this.setState({
+        playerTracker: res.data
+      });
+      console.log('Playing stuff', this.state.playerTracker);
+    } catch (err) {
+      // TODO error handling for 400 cooldown not happening
+      console.log(err);
+    }
+  };
 
   // pray = async () => {
   //   try {
@@ -376,6 +395,7 @@ export class GraphMap extends Component {
             roomId={this.state.room_data.current_room_id}
             coordinates={this.state.coordinates}
             neighbors={this.state.neighbors}
+            playerTracker={this.state.playerTracker}
           />
         </MapWrapper>
         <ControlContainer>
@@ -439,19 +459,20 @@ const MainContainer = Styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  
-  
-  
+  height: 100%;
+
+
+
 `;
 
 const MapWrapper = Styled.div`
   width: 100%;
+  height: 100%;
   /* border: 2px solid yellow; */
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgb(114,201,221);
-background: linear-gradient(0deg, rgba(114,201,221,1) 0%, rgba(48,125,228,0.8751778054971989) 43%, rgba(0,212,255,1) 98%);
+ 
 `;
 
 const ControlContainer = Styled.div`
