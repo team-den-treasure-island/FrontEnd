@@ -382,7 +382,7 @@ export class GraphMap extends Component {
           {this.state.activeCooldown && (
             <>
               <h1>Cooldown: {this.state.cooldown}</h1>
-              <Loader type='Puff' color='#ff1f1f' height='150' width='150' />
+              <Loader type="Puff" color="#ff1f1f" height="150" width="150" />
             </>
           )}
 

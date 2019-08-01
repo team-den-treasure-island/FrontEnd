@@ -10,7 +10,7 @@ const Map = props => {
     // console.log(coordinates)
     const canvas = ref.current;
     canvas.width = 900;
-    canvas.height = 600;
+    canvas.height = 900;
     const context = canvas.getContext('2d');
     const minX = 50;
     const minY = 40;
@@ -28,29 +28,42 @@ const Map = props => {
     };
     for (let room in coordinates) {
       context.globalCompositeOperation = 'destination-over';
-      let heightBox = 10;
+      let heightBox = 8;
       let widthBox = 10;
-      context.fillRect(
-        transX(coordinates[room]['x']),
-        transY(coordinates[room]['y']),
-        widthBox,
-        heightBox
-      );
 
-      context.fillStyle = 'black';
+      let circle = new Path2D();
+      circle.moveTo(
+        transX(coordinates[room]['x']),
+        transY(coordinates[room]['y'])
+      );
+      circle.arc(
+        transX(coordinates[room]['x'] + 0.3),
+        transY(coordinates[room]['y']),
+        heightBox,
+        0,
+        2 * Math.PI
+      );
+      context.fill(circle);
+
+      if (coordinates[room]['id'].toString() === roomId.toString()) {
+        context.fillStyle = 'red';
+        console.log('Coloring a red square...');
+      } else {
+        context.fillStyle = 'black';
+      }
     }
 
     for (let room in coordinates) {
-      let widthBox = 10;
+      let widthBox = 7.4;
       if (neighbors[room]['n']) {
         let direction = neighbors[room]['n'];
         context.beginPath();
         context.moveTo(
-          transX(coordinates[room]['x']) + widthBox / 2,
+          transX(coordinates[room]['x'] + 0.3) + widthBox / 2,
           transY(coordinates[room]['y'])
         );
         context.lineTo(
-          transX(coordinates[direction]['x']) + widthBox / 2,
+          transX(coordinates[direction]['x'] + 0.3) + widthBox / 2,
           transY(coordinates[direction]['y']) + widthBox
         );
         context.stroke();
@@ -61,11 +74,11 @@ const Map = props => {
         let direction = neighbors[room]['s'];
         context.beginPath();
         context.moveTo(
-          transX(coordinates[room]['x']) + widthBox / 2,
+          transX(coordinates[room]['x'] + 0.3) + widthBox / 2,
           transY(coordinates[room]['y']) + widthBox
         );
         context.lineTo(
-          transX(coordinates[direction]['x']) + widthBox / 2,
+          transX(coordinates[direction]['x'] + 0.3) + widthBox / 2,
           transY(coordinates[direction]['y']) + widthBox
         );
         context.stroke();
@@ -74,11 +87,11 @@ const Map = props => {
         let direction = neighbors[room]['e'];
         context.beginPath();
         context.moveTo(
-          transX(coordinates[room]['x']) + widthBox,
+          transX(coordinates[room]['x'] + 0.3) + widthBox,
           transY(coordinates[room]['y']) + widthBox / 2
         );
         context.lineTo(
-          transX(coordinates[direction]['x']),
+          transX(coordinates[direction]['x'] + 0.3),
           transY(coordinates[direction]['y']) + widthBox / 2
         );
         context.stroke();
@@ -87,11 +100,11 @@ const Map = props => {
         let direction = neighbors[room]['w'];
         context.beginPath();
         context.moveTo(
-          transX(coordinates[room]['x']),
+          transX(coordinates[room]['x'] + 0.3),
           transY(coordinates[room]['y']) + widthBox / 2
         );
         context.lineTo(
-          transX(coordinates[direction]['x']) + 5,
+          transX(coordinates[direction]['x'] + 0.3) + 5,
           transY(coordinates[direction]['y']) + widthBox / 2
         );
         context.stroke();
