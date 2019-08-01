@@ -395,7 +395,7 @@ export class GraphMap extends Component {
           {this.state.activeCooldown && (
             <>
               <h1>Cooldown: {this.state.cooldown}</h1>
-              <Loader type="Puff" color="#ff1f1f" height="150" width="150" />
+              <Loader type='Puff' color='#ff1f1f' height='150' width='150' />
             </>
           )}
 
@@ -424,10 +424,6 @@ export class GraphMap extends Component {
                 examineRoom={name => this.examineRoom(name)}
                 currentRoom={this.state.room_data.current_room_id}
               />
-
-              <button onClick={() => this.treasure_drop('tiny treasure')}>
-                Drop tiny treasure
-              </button>
 
               <select
                 onChange={e => {
