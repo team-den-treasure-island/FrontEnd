@@ -7,7 +7,6 @@ const Map = props => {
   const { coordinates, neighbors, roomId, nextRoom } = props;
 
   useEffect(() => {
-    // console.log(coordinates)
     const canvas = ref.current;
     canvas.width = 900;
     canvas.height = 640;

@@ -6,8 +6,6 @@ const Navigation = props => {
 
   return (
     <NavigationContainer>
-      {/* {!exits ? (
-        <> */}
       <p>Available Moves:</p>
       <ButtonsContainer>
         {exits.map(exit => (
@@ -16,8 +14,6 @@ const Navigation = props => {
           </NavButton>
         ))}
       </ButtonsContainer>
-      {/* </>
-      ) : null} */}
     </NavigationContainer>
   );
 };
@@ -27,9 +23,10 @@ const NavigationContainer = Styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  /* margin: 20px 0 0 0; */
   /* border: 2px solid yellow; */
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
 
   p {
     margin: 0 0 10px 0;
@@ -42,7 +39,7 @@ const ButtonsContainer = Styled.div`
   justify-content: flex-start;
   /* border: 2px solid yellow; */
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
 `;
 
 const NavButton = Styled.button`

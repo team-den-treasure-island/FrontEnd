@@ -10,7 +10,7 @@ const Players = props => {
     characters, 
     nameToId 
   } = props;
-  
+
   return (
     <PlayerContainer>
       {currentRoom < 0 ? (
@@ -38,7 +38,7 @@ const Players = props => {
       <select onChange={e => stopAutopilot(e.target.value)}>
         <option>Choose your player!</option>
         {characters.map(chars => (
-          <option value={nameToId[chars]}>{chars}</option>
+          <option key={chars} value={nameToId[chars]}>{chars}</option>
         ))}
       </select>
     </PlayerContainer>
@@ -53,11 +53,12 @@ const PlayerContainer = Styled.div`
   flex-wrap: wrap;
   margin: 10px 0;
   padding: 10px 0;
+  width: 100%;
   border-top: 2px solid black;
   border-bottom: 2px solid black;
 
   p {
-    margin: 0 0 5px 0;
+    margin: 0 0 10px 0;
   }
 `;
 

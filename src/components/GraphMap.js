@@ -8,6 +8,7 @@ import Loader from 'react-loader-spinner';
 import { datajson } from '../data/data';
 import Map from './Map.js';
 import Players from './Players.js';
+import PlayerStats from './PlayerStats.js'
 import Navigation from './Navigation.js';
 import Items from './Items.js'
 
@@ -56,15 +57,15 @@ export class GraphMap extends Component {
         terrain: ''
       },
       player_status: {
-        name: '',
-        encumberance: null,
-        strength: 10,
-        speed: 10,
-        gold: null,
-        inventory: [],
-        status: [],
-        errors: [],
-        messages: []
+        Name: '',
+        Encumbrance: null,
+        Strength: 10,
+        Speed: 10,
+        Gold: null,
+        Inventory: [],
+        Status: [],
+        Errors: [],
+        Messages: []
       },
       examined: {},
       coordinates: [],
@@ -78,20 +79,19 @@ export class GraphMap extends Component {
     if (this.state.activeCooldown) {
       this.checkCooldown();
     }
+    // if (this.state.currentPlayer !== null){
+    // }
   }
-
+  
   componentDidUpdate() {
     console.log('Cooldown:', this.state.cooldown);
     clearInterval(this.interval);
     if (this.state.cooldown > 0) {
-      this.interval = setInterval(
-        () =>
-          this.setState({
-            cooldown: this.state.cooldown - 1
-          }),
-        1000
-      );
+      this.interval = setInterval(() => this.setState({
+          cooldown: this.state.cooldown - 1
+        }),1000);
     } else if (this.state.activeCooldown === true) {
+      this.getData()
       this.setState({
         activeCooldown: false
       });
@@ -142,7 +142,9 @@ export class GraphMap extends Component {
     });
   };
 
-  getData = async token => {
+  getData = async (token=this.state.currentPlayer) => {
+    console.log('INSIDE GET DATA')
+    console.log('TOKEN:', token)
     try {
       let res = await axios({
         url: 'https://lambda-treasure-hunt.herokuapp.com/api/adv/status/',
@@ -157,26 +159,55 @@ export class GraphMap extends Component {
         console.log(res.status);
       }
       // Don't forget to return something
-      console.log(res.data);
+      console.log('USER DATA:', res.data);
       console.log(res.data.room_id);
 
       this.setState({
         player_status: {
-          name: res.data.name,
-          encumberance: res.data.encumberance,
-          strength: res.data.strength,
-          speed: res.data.speed,
-          gold: res.data.gold,
-          inventory: res.data.inventory,
-          status: res.data.status,
-          errors: res.data.errors,
-          messages: res.data.messages
+          Name: res.data.name,
+          Encumbrance: res.data.encumbrance,
+          Strength: res.data.strength,
+          Speed: res.data.speed,
+          Gold: res.data.gold,
+          Inventory: res.data.inventory,
+          Status: res.data.status,
+          Errors: res.data.errors,
+          Messages: res.data.messages
         }
       });
     } catch (err) {
       console.error(err);
     }
   };
+
+  updateManualPosition = async token => {
+    console.log('UPDATING PLAYER POSITION...')
+    try {
+      let name = idToName[token]
+      console.log('NAME:', name)
+      let data = { name, current_room: this.state.room_data.current_room_id };
+      let res = await axios({
+        method: 'put',
+        url: `https://gentle-dusk-98459.herokuapp.com/api/players/${name}/`,
+        headers: {
+          Authorization: `Token 19b25831b9ab279bb5952dce42810fff6f4e2314`,
+          'Content-type': 'application/json'
+        },
+        data
+      });
+      this.setState({
+        cooldown: res.data.cooldown,
+        currentPlayer: token
+      });
+      console.log('new cooldown', this.state.cooldown);
+      this.setState({ activeCooldown: true })
+      setTimeout(() => {
+        this.setState({ activeCooldown: false });
+      }, this.state.cooldown * 1000);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   getInit = async token => {
     try {
@@ -207,6 +238,8 @@ export class GraphMap extends Component {
           terrain: res.data.terrain
         }
       });
+      // Update player position on server
+      this.updateManualPosition(token)
     } catch (err) {
       // TODO error handling for 400 cooldown not happening
       console.log(err);
@@ -266,6 +299,7 @@ export class GraphMap extends Component {
         }
       });
       console.table('State', this.state.cooldown);
+      this.updateManualPosition(token)
 
       // setTimeout(() => {
       //   this.getData();
@@ -349,12 +383,12 @@ export class GraphMap extends Component {
         },
         data
       });
-      console.log('RESPOINSE!!!!!', res);
       this.setState({
         cooldown: res.data.cooldown,
         currentPlayer: value
       });
       console.log('new cooldown', this.state.cooldown);
+      this.setState({ activeCooldown: true })
       setTimeout(() => {
         this.setState({ activeCooldown: false });
         this.getInit(value);
@@ -382,35 +416,22 @@ export class GraphMap extends Component {
         <ControlContainer>
           {this.state.activeCooldown && (
             <CooldownSpinner>
-              <h2>Cooldown: {this.state.cooldown}</h2>
-              <Loader type='Rings' color='#cdf279' height='150' width='150' />
+              <div>
+                <h2>Cooldown: {this.state.cooldown}</h2>
+              </div>
+              <Loader type='Rings' color='#cdf279' height={150} width={150} />
             </CooldownSpinner>
           )}
-
           {!this.state.activeCooldown && (
-            <>
+            <ControlComponents>
               <Navigation
                 exits={this.state.room_data.exits}
                 movement={exit => this.movement(exit)}
               />
-
               <Items 
                 items={this.state.room_data.items}
                 pickup={(item) => this.treasure_pickup(item)}
               />
-              {/* {this.state.room_data.items.length !== 0 ? (
-                this.state.room_data.items.map(item => (
-                  <ul key={item}>
-                    <li>Items in room:</li>
-                    <button onClick={() => this.treasure_pickup({ item })}>
-                      pick up: {item}
-                    </button>
-                  </ul>
-                ))
-              ) : (
-                <p>This room contains no items</p>
-              )} */}
-
               <Players
                 players={this.state.room_data.players}
                 examineRoom={name => this.examineRoom(name)}
@@ -419,11 +440,13 @@ export class GraphMap extends Component {
                 nameToId={nameToId}
                 stopAutopilot={value => this.stopAutopilot(value)}
               />
-
-              <button onClick={() => this.treasure_drop('tiny treasure')}>
+              <PlayerStats 
+                player={this.state.player_status}
+              />
+              {/* <button onClick={() => this.treasure_drop('tiny treasure')}>
                 Drop tiny treasure
-              </button>
-            </>
+              </button> */}
+            </ControlComponents>
           )}
         </ControlContainer>
       </MainContainer>
@@ -439,7 +462,7 @@ const MainContainer = Styled.div`
 `;
 
 const MapWrapper = Styled.div`
-  width: 100%;
+  width: 80vw;
   /* border: 2px solid yellow; */
   display: flex;
   align-items: flex-start;
@@ -453,11 +476,19 @@ const ControlContainer = Styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 20px;
-  max-height: 100%;
   border-left: 2px solid black;
   width: 20vw;
+  height: 100vh;
+  max-height: 100vh;
 `;
+
+const ControlComponents = Styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px 10px;
+`
 
 const CooldownSpinner = Styled.div`
   display: flex;
@@ -467,8 +498,11 @@ const CooldownSpinner = Styled.div`
   width: 100%;
   /* border: 2px solid red; */
 
-  h2 {
-    width: 80%
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 `
 
