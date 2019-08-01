@@ -439,6 +439,7 @@ const MainContainer = Styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  height: 100%;
 
 
 
@@ -446,6 +447,7 @@ const MainContainer = Styled.div`
 
 const MapWrapper = Styled.div`
   width: 100%;
+  height: 100%;
   /* border: 2px solid yellow; */
   display: flex;
   align-items: center;

@@ -1,16 +1,43 @@
 import React from 'react';
 import Styled from 'styled-components';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
+
+const useWindowSize = () => {
+  const [width, setWidth] = useState(window.innerWidth);
+  const [height, setHeight] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+      setHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  });
+
+  return [width, height];
+};
 
 const Map = props => {
   const ref = useRef();
   const { coordinates, neighbors, roomId, nextRoom } = props;
+  const [windowWidth, windowHeight] = useWindowSize();
+
+  // useEffect(() => {
+  // }, [windowWidth, windowHeight]);
 
   useEffect(() => {
     // console.log(coordinates)
+    // const canvas = ref.current;
+    // canvas.width = 1200;
+    // canvas.height = 900;
     const canvas = ref.current;
-    canvas.width = 1200;
-    canvas.height = 900;
+    canvas.style.height = '100%';
+    canvas.style.width = '100%';
+    canvas.height = canvas.offsetHeight;
+    canvas.width = canvas.offsetWidth;
     const context = canvas.getContext('2d');
     const minX = 50;
     const minY = 45;
@@ -109,13 +136,14 @@ const Map = props => {
       );
       context.fillStyle = 'black';
     }
-  }, [coordinates, roomId, nextRoom]);
+  }, [coordinates, roomId, nextRoom, windowHeight, windowWidth]);
 
   return (
     <>
       <canvas
         ref={ref}
         onScroll={console.log}
+        style={{ backgroundColor: 'lightblue' }}
       />
     </>
   );
