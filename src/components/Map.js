@@ -26,11 +26,22 @@ const Map = props => {
       const newY = (maxY - y) * (canvas.height / (maxY - minY));
       return newY;
     };
+    for (let room in coordinates) {
+      context.globalCompositeOperation = 'destination-over';
+      let heightBox = 10;
+      let widthBox = 10;
+      context.fillRect(
+        transX(coordinates[room]['x']),
+        transY(coordinates[room]['y']),
+        widthBox,
+        heightBox
+      );
+
+      context.fillStyle = 'black';
+    }
 
     for (let room in coordinates) {
       let widthBox = 10;
-      let heightBox = 10;
-
       if (neighbors[room]['n']) {
         let direction = neighbors[room]['n'];
         context.beginPath();
@@ -44,7 +55,7 @@ const Map = props => {
         );
         context.stroke();
         context.strokeStyle = 'green';
-        context.lineWidth = '5 ';
+        context.lineWidth = '3 ';
       }
       if (neighbors[room]['s']) {
         let direction = neighbors[room]['s'];
@@ -92,14 +103,6 @@ const Map = props => {
       } else {
         context.fillStyle = 'black';
       }
-
-      context.fillRect(
-        transX(coordinates[room]['x']),
-        transY(coordinates[room]['y']),
-        widthBox,
-        heightBox
-      );
-      context.fillStyle = 'black';
     }
   }, [coordinates, roomId, nextRoom, neighbors]);
 
