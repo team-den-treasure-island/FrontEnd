@@ -16,7 +16,7 @@ const AppContainer = Styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background-image: linear-gradient(#90ddf0, #062F32);
+  /* background-image: linear-gradient(#90ddf0, #062F32); */
   height: 100vh;
 `
 

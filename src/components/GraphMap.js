@@ -439,9 +439,9 @@ const MainContainer = Styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  
-  
-  
+
+
+
 `;
 
 const MapWrapper = Styled.div`
@@ -450,8 +450,8 @@ const MapWrapper = Styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgb(114,201,221);
-background: linear-gradient(0deg, rgba(114,201,221,1) 0%, rgba(48,125,228,0.8751778054971989) 43%, rgba(0,212,255,1) 98%);
+  /* background: rgb(114,201,221); */
+/* background: linear-gradient(0deg, rgba(114,201,221,1) 0%, rgba(48,125,228,0.8751778054971989) 43%, rgba(0,212,255,1) 98%); */
 `;
 
 const ControlContainer = Styled.div`
