@@ -439,6 +439,9 @@ const MainContainer = Styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  
+  
+  
 `;
 
 const MapWrapper = Styled.div`
@@ -447,16 +450,21 @@ const MapWrapper = Styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgb(114,201,221);
+background: linear-gradient(0deg, rgba(114,201,221,1) 0%, rgba(48,125,228,0.8751778054971989) 43%, rgba(0,212,255,1) 98%);
 `;
 
 const ControlContainer = Styled.div`
+  font-family: 'Anton', sans-serif;
   display: flex;
   flex-direction: column;
+  /* border: 2px solid yellow; */
   justify-content: flex-start;
   align-items: flex-start;
   padding: 20px;
-  max-height: 100%;
+  height: 94%;
   border-left: 2px solid black;
+  background-color: tan;
 `;
 
 export default GraphMap;

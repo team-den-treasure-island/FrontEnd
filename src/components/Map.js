@@ -44,17 +44,10 @@ const Map = props => {
         2 * Math.PI
       );
       context.fill(circle);
-
-      if (coordinates[room]['id'].toString() === roomId.toString()) {
-        context.fillStyle = 'red';
-        console.log('Coloring a red square...');
-      } else {
-        context.fillStyle = 'black';
-      }
     }
 
     for (let room in coordinates) {
-      let widthBox = 7.4;
+      let widthBox = 7;
       if (neighbors[room]['n']) {
         let direction = neighbors[room]['n'];
         context.beginPath();
