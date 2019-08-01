@@ -22,7 +22,7 @@ const useWindowSize = () => {
 
 const Map = props => {
   const ref = useRef();
-  const { coordinates, neighbors, roomId, nextRoom } = props;
+  const { coordinates, neighbors, roomId, nextRoom, playerTracker } = props;
   const [windowWidth, windowHeight] = useWindowSize();
 
   // useEffect(() => {
@@ -33,6 +33,7 @@ const Map = props => {
     // const canvas = ref.current;
     // canvas.width = 1200;
     // canvas.height = 900;
+
     const canvas = ref.current;
     canvas.style.height = '100%';
     canvas.style.width = '100%';
@@ -116,9 +117,16 @@ const Map = props => {
 
       if (coordinates[room]['id'] == roomId) {
         context.fillStyle = 'red';
-        console.log('Coloring a red square...');
+        console.log('Coloring a red square ');
       } else {
         context.fillStyle = 'black';
+      }
+
+      for (let player in playerTracker) {
+        if (playerTracker[player]['current_room'] == coordinates[room]['id']) {
+          context.fillStyle = 'red';
+          console.log('fill damnit ');
+        }
       }
 
       context.font = 'bold 12px Arial';
@@ -136,7 +144,7 @@ const Map = props => {
       );
       context.fillStyle = 'black';
     }
-  }, [coordinates, roomId, nextRoom, windowHeight, windowWidth]);
+  }, [coordinates, roomId, nextRoom, windowHeight, windowWidth, playerTracker]);
 
   return (
     <>

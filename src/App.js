@@ -1,5 +1,5 @@
 import React from 'react';
-import Styled from 'styled-components'
+import Styled from 'styled-components';
 
 import GraphMap from './components/GraphMap';
 
@@ -18,6 +18,6 @@ const AppContainer = Styled.div`
   justify-content: flex-start;
   /* background-image: linear-gradient(#90ddf0, #062F32); */
   height: 100vh;
-`
+`;
 
 export default App;
