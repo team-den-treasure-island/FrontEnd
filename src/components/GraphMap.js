@@ -84,7 +84,6 @@ export class GraphMap extends Component {
   }
 
   componentDidUpdate() {
-    console.log('Cooldown:', this.state.cooldown);
     clearInterval(this.interval);
     if (this.state.cooldown > 0) {
       this.interval = setInterval(
@@ -113,8 +112,6 @@ export class GraphMap extends Component {
         },
         data
       });
-
-      console.log(res.data);
 
       this.setState({
         cooldown: res.data.cooldown,
@@ -159,8 +156,6 @@ export class GraphMap extends Component {
         console.log(res.status);
       }
       // Don't forget to return something
-      console.log(res.data);
-      console.log(res.data.room_id);
 
       this.setState({
         player_status: {
@@ -189,7 +184,6 @@ export class GraphMap extends Component {
           Authorization: `Token ${token}`
         }
       });
-      console.log(res.data);
 
       this.setState({
         cooldown: res.data.cooldown,
@@ -219,7 +213,7 @@ export class GraphMap extends Component {
     console.log('COOLING OFF...');
     setTimeout(() => {
       console.log('Cooldown:', this.state.cooldown);
-      console.log('Setting activeCooldown to false');
+
       this.setState({ activeCooldown: false });
     }, this.state.cooldown * 1000);
   };
@@ -286,7 +280,6 @@ export class GraphMap extends Component {
       this.setState({
         playerTracker: res.data
       });
-      console.log('Playing stuff', this.state.playerTracker);
     } catch (err) {
       // TODO error handling for 400 cooldown not happening
       console.log(err);
@@ -443,7 +436,9 @@ export class GraphMap extends Component {
               >
                 <option>Choose your player!</option>
                 {this.state.characters.map(chars => (
-                  <option value={nameToId[chars]}>{chars}</option>
+                  <option key={Math.random() * 116} value={nameToId[chars]}>
+                    {chars}
+                  </option>
                 ))}
               </select>
             </>

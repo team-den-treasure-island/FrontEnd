@@ -1,5 +1,5 @@
 import React from 'react';
-import Styled from 'styled-components';
+
 import { useRef, useEffect, useState } from 'react';
 
 const useWindowSize = () => {
@@ -115,17 +115,17 @@ const Map = props => {
         context.stroke();
       }
 
-      if (coordinates[room]['id'] == roomId) {
+      if (+coordinates[room]['id'] === +roomId) {
         context.fillStyle = 'red';
-        console.log('Coloring a red square ');
       } else {
         context.fillStyle = 'black';
       }
 
       for (let player in playerTracker) {
-        if (playerTracker[player]['current_room'] == coordinates[room]['id']) {
+        if (
+          +playerTracker[player]['current_room'] === +coordinates[room]['id']
+        ) {
           context.fillStyle = 'red';
-          console.log('fill damnit ');
         }
       }
 
@@ -144,7 +144,15 @@ const Map = props => {
       );
       context.fillStyle = 'black';
     }
-  }, [coordinates, roomId, nextRoom, windowHeight, windowWidth, playerTracker]);
+  }, [
+    coordinates,
+    roomId,
+    nextRoom,
+    windowHeight,
+    windowWidth,
+    playerTracker,
+    neighbors
+  ]);
 
   return (
     <>
