@@ -17,7 +17,8 @@ const AppContainer = Styled.div`
   align-items: center;
   justify-content: flex-start;
   background-image: linear-gradient(#90ddf0, #062F32);
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
 `
 
 export default App;

@@ -56,7 +56,7 @@ const NavButton = Styled.button`
 
   :hover {
     background: none;
-    border: 1px solid black;
+    border: 1px solid #cdf279;
     transition: .2s;
   }
 `;

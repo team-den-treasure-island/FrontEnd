@@ -380,10 +380,10 @@ export class GraphMap extends Component {
         </MapWrapper>
         <ControlContainer>
           {this.state.activeCooldown && (
-            <>
-              <h1>Cooldown: {this.state.cooldown}</h1>
-              <Loader type='Puff' color='#ff1f1f' height='150' width='150' />
-            </>
+            <CooldownSpinner>
+              <h2>Cooldown: {this.state.cooldown}</h2>
+              <Loader type='Rings' color='#cdf279' height='150' width='150' />
+            </CooldownSpinner>
           )}
 
           {!this.state.activeCooldown && (
@@ -410,22 +410,14 @@ export class GraphMap extends Component {
                 players={this.state.room_data.players}
                 examineRoom={name => this.examineRoom(name)}
                 currentRoom={this.state.room_data.current_room_id}
+                characters={this.state.characters}
+                nameToId={nameToId}
+                stopAutopilot={value => this.stopAutopilot(value)}
               />
 
               <button onClick={() => this.treasure_drop('tiny treasure')}>
                 Drop tiny treasure
               </button>
-
-              <select
-                onChange={e => {
-                  this.stopAutopilot(e.target.value);
-                }}
-              >
-                <option>Choose your player!</option>
-                {this.state.characters.map(chars => (
-                  <option value={nameToId[chars]}>{chars}</option>
-                ))}
-              </select>
             </>
           )}
         </ControlContainer>
@@ -445,8 +437,10 @@ const MapWrapper = Styled.div`
   width: 100%;
   /* border: 2px solid yellow; */
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding: 0;
+  margin: 0;
 `;
 
 const ControlContainer = Styled.div`
@@ -457,6 +451,20 @@ const ControlContainer = Styled.div`
   padding: 20px;
   max-height: 100%;
   border-left: 2px solid black;
+  width: 20vw;
 `;
+
+const CooldownSpinner = Styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  /* border: 2px solid red; */
+
+  h2 {
+    width: 80%
+  }
+`
 
 export default GraphMap;

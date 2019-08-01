@@ -10,12 +10,13 @@ const Map = props => {
     // console.log(coordinates)
     const canvas = ref.current;
     canvas.width = 900;
-    canvas.height = 600;
+    canvas.height = 640;
     const context = canvas.getContext('2d');
     const minX = 50;
     const minY = 40;
     const maxX = 74;
     const maxY = 80;
+    const BoxSize = 8;
 
     const transX = x => {
       const newX = (x - minX) * (canvas.width / (maxX - minX));
@@ -28,34 +29,32 @@ const Map = props => {
     };
 
     for (let room in coordinates) {
-      let widthBox = 10;
-      let heightBox = 10;
 
       if (neighbors[room]['n']) {
         let direction = neighbors[room]['n'];
+        context.strokeStyle = '#cdf279';
+        context.lineWidth = '2';
         context.beginPath();
         context.moveTo(
-          transX(coordinates[room]['x']) + widthBox / 2,
+          transX(coordinates[room]['x']) + BoxSize / 2,
           transY(coordinates[room]['y'])
         );
         context.lineTo(
-          transX(coordinates[direction]['x']) + widthBox / 2,
-          transY(coordinates[direction]['y']) + widthBox
+          transX(coordinates[direction]['x']) + BoxSize / 2,
+          transY(coordinates[direction]['y']) + BoxSize
         );
         context.stroke();
-        context.strokeStyle = 'green';
-        context.lineWidth = '5 ';
       }
       if (neighbors[room]['s']) {
         let direction = neighbors[room]['s'];
         context.beginPath();
         context.moveTo(
-          transX(coordinates[room]['x']) + widthBox / 2,
-          transY(coordinates[room]['y']) + widthBox
+          transX(coordinates[room]['x']) + BoxSize / 2,
+          transY(coordinates[room]['y']) + BoxSize
         );
         context.lineTo(
-          transX(coordinates[direction]['x']) + widthBox / 2,
-          transY(coordinates[direction]['y']) + widthBox
+          transX(coordinates[direction]['x']) + BoxSize / 2,
+          transY(coordinates[direction]['y']) + BoxSize
         );
         context.stroke();
       }
@@ -63,12 +62,12 @@ const Map = props => {
         let direction = neighbors[room]['e'];
         context.beginPath();
         context.moveTo(
-          transX(coordinates[room]['x']) + widthBox,
-          transY(coordinates[room]['y']) + widthBox / 2
+          transX(coordinates[room]['x']) + BoxSize,
+          transY(coordinates[room]['y']) + BoxSize / 2
         );
         context.lineTo(
           transX(coordinates[direction]['x']),
-          transY(coordinates[direction]['y']) + widthBox / 2
+          transY(coordinates[direction]['y']) + BoxSize / 2
         );
         context.stroke();
       }
@@ -77,29 +76,34 @@ const Map = props => {
         context.beginPath();
         context.moveTo(
           transX(coordinates[room]['x']),
-          transY(coordinates[room]['y']) + widthBox / 2
+          transY(coordinates[room]['y']) + BoxSize / 2
         );
         context.lineTo(
           transX(coordinates[direction]['x']) + 5,
-          transY(coordinates[direction]['y']) + widthBox / 2
+          transY(coordinates[direction]['y']) + BoxSize / 2
         );
         context.stroke();
       }
 
+    }
+    
+    for (let room in coordinates) {
+      
       if (coordinates[room]['id'].toString() === roomId.toString()) {
-        context.fillStyle = 'red';
+        context.fillStyle = '#f25f5c';
         console.log('Coloring a red square...');
       } else {
         context.fillStyle = 'black';
       }
-
+  
       context.fillRect(
         transX(coordinates[room]['x']),
         transY(coordinates[room]['y']),
-        widthBox,
-        heightBox
+        BoxSize,
+        BoxSize
       );
       context.fillStyle = 'black';
+
     }
   }, [coordinates, roomId, nextRoom, neighbors]);
 

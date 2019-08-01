@@ -2,14 +2,22 @@ import React from 'react';
 import Styled from 'styled-components';
 
 const Players = props => {
-  const { players, examineRoom, currentRoom } = props;
+  const { 
+    players, 
+    examineRoom, 
+    currentRoom, 
+    stopAutopilot, 
+    characters, 
+    nameToId 
+  } = props;
+  
   return (
     <PlayerContainer>
       {currentRoom < 0 ? (
         <p>Please select a player!</p>
       ) : (
         <>
-          <p>You are in Room Number: {currentRoom}</p>
+          <p>You are in room {currentRoom}</p>
           <p>Players with you:</p>
           <PlayerList>
             {players.length !== 0 ? (
@@ -27,6 +35,12 @@ const Players = props => {
           </PlayerList>
         </>
       )}
+      <select onChange={e => stopAutopilot(e.target.value)}>
+        <option>Choose your player!</option>
+        {characters.map(chars => (
+          <option value={nameToId[chars]}>{chars}</option>
+        ))}
+      </select>
     </PlayerContainer>
   );
 };
@@ -43,7 +57,7 @@ const PlayerContainer = Styled.div`
   border-bottom: 2px solid black;
 
   p {
-    margin: 0 0 10px 0;
+    margin: 0 0 5px 0;
   }
 `;
 
@@ -70,7 +84,7 @@ const PlayerButton = Styled.button`
 
   :hover {
     background: none;
-    border: 1px solid black;
+    border: 1px solid #cdf279;
     transition: .2s;
   }
 `;
