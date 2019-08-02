@@ -57,15 +57,15 @@ export class GraphMap extends Component {
         terrain: ''
       },
       player_status: {
-        Name: '',
-        Encumbrance: null,
-        Strength: 10,
-        Speed: 10,
-        Gold: null,
-        Inventory: [],
-        Status: [],
-        Errors: [],
-        Messages: []
+        name: '',
+        encumbrance: null,
+        strength: 10,
+        speed: 10,
+        gold: null,
+        inventory: [],
+        status: [],
+        errors: [],
+        messages: []
       },
       examined: {},
       coordinates: [],
@@ -91,7 +91,7 @@ export class GraphMap extends Component {
           cooldown: this.state.cooldown - 1
         }),1000);
     } else if (this.state.activeCooldown === true) {
-      this.getData()
+      // this.getData()
       this.setState({
         activeCooldown: false
       });
@@ -182,6 +182,7 @@ export class GraphMap extends Component {
 
   updateManualPosition = async token => {
     console.log('UPDATING PLAYER POSITION...')
+    console.log('TOKEN:', token)
     try {
       let name = idToName[token]
       console.log('NAME:', name)
@@ -197,12 +198,13 @@ export class GraphMap extends Component {
       });
       this.setState({
         cooldown: res.data.cooldown,
-        currentPlayer: token
+        currentPlayer: token,
+        activeCooldown: true
       });
       console.log('new cooldown', this.state.cooldown);
-      this.setState({ activeCooldown: true })
       setTimeout(() => {
         this.setState({ activeCooldown: false });
+        this.getData()
       }, this.state.cooldown * 1000);
     } catch (err) {
       console.log(err);
@@ -370,6 +372,7 @@ export class GraphMap extends Component {
   };
 
   stopAutopilot = async value => {
+    console.log('StopAutoPilot NAME:', value)
     let name = idToName[value];
     let data = { name, explore_mode: false };
     try {

@@ -19,16 +19,12 @@ const PlayerStats = props => {
   let statKeys = Object.keys(player)
   // let statValues = Object.values(player)
 
+  console.log('PLAYER STATS:', player)
   return (
     <StatsContainer>
       {statKeys.map((stat) => (
-        <p>{stat}: {player[stat]}</p>
+        <p key={stat}>{stat}: {player[stat]}</p>
       ))}
-      {/* <p>Name: {player.name}</p>
-      <p>Encumbrance: {player.encumbrance}</p>
-      <p>Strength: {player.strength}</p>
-      <p>Speed: {player.speed}</p>
-      <p>Gold: {player.gold}</p> */}
     </StatsContainer>
   )
 }
