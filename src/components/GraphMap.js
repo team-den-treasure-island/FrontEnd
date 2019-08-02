@@ -479,6 +479,15 @@ const MapWrapper = Styled.div`
 const TinyTreasure = Styled.button`
 margin: 10px auto;
 padding: 10px;
+width: 100%;
+background-color:white;
+border-style: none;
+
+:hover {
+    background: none;
+    border: 1px solid black;
+    transition: .2s;
+  }
 `;
 
 const ControlContainer = Styled.div`
