@@ -28,8 +28,8 @@ const NavigationContainer = Styled.div`
   align-items: flex-start;
   justify-content: flex-start;
   /* border: 2px solid yellow; */
-  width: 100%;
-  height: 100%;
+  width: 10%;
+  height: 10%;
 
   p {
     margin: 0 0 10px 0;
@@ -41,8 +41,8 @@ const ButtonsContainer = Styled.div`
   align-items: center;
   justify-content: flex-start;
   /* border: 2px solid yellow; */
-  width: 100%;
-  height: 100%;
+  width: 10%;
+  height: 10%;
 `;
 
 const NavButton = Styled.button`

@@ -395,7 +395,7 @@ export class GraphMap extends Component {
           {this.state.activeCooldown && (
             <>
               <h1>Cooldown: {this.state.cooldown}</h1>
-              <Loader type='Puff' color='#ff1f1f' height='150' width='150' />
+              <Loader type="Puff" color="#ff1f1f" height="150" width="150" />
             </>
           )}
 
@@ -425,7 +425,11 @@ export class GraphMap extends Component {
                 currentRoom={this.state.room_data.current_room_id}
               />
 
-              <select
+              <TinyTreasure onClick={() => this.treasure_drop('tiny treasure')}>
+                Drop tiny treasure
+              </TinyTreasure>
+
+              <Select
                 onChange={e => {
                   this.stopAutopilot(e.target.value);
                 }}
@@ -436,7 +440,7 @@ export class GraphMap extends Component {
                     {chars}
                   </option>
                 ))}
-              </select>
+              </Select>
             </>
           )}
         </ControlContainer>
@@ -444,6 +448,12 @@ export class GraphMap extends Component {
     );
   }
 }
+
+const Select = Styled.select`
+padding: 10px;
+background-color: tan;
+border: 3px black solid;
+`;
 
 const MainContainer = Styled.div`
   display: flex;
@@ -464,6 +474,20 @@ const MapWrapper = Styled.div`
   align-items: center;
   justify-content: center;
  
+`;
+
+const TinyTreasure = Styled.button`
+margin: 10px auto;
+padding: 10px;
+width: 100%;
+background-color:white;
+border-style: none;
+
+:hover {
+    background: none;
+    border: 1px solid black;
+    transition: .2s;
+  }
 `;
 
 const ControlContainer = Styled.div`
