@@ -425,11 +425,11 @@ export class GraphMap extends Component {
                 currentRoom={this.state.room_data.current_room_id}
               />
 
-              <button onClick={() => this.treasure_drop('tiny treasure')}>
+              <TinyTreasure onClick={() => this.treasure_drop('tiny treasure')}>
                 Drop tiny treasure
-              </button>
+              </TinyTreasure>
 
-              <select
+              <Select
                 onChange={e => {
                   this.stopAutopilot(e.target.value);
                 }}
@@ -440,7 +440,7 @@ export class GraphMap extends Component {
                     {chars}
                   </option>
                 ))}
-              </select>
+              </Select>
             </>
           )}
         </ControlContainer>
@@ -448,6 +448,12 @@ export class GraphMap extends Component {
     );
   }
 }
+
+const Select = Styled.select`
+padding: 10px;
+background-color: tan;
+border: 3px black solid;
+`;
 
 const MainContainer = Styled.div`
   display: flex;
@@ -468,6 +474,11 @@ const MapWrapper = Styled.div`
   align-items: center;
   justify-content: center;
  
+`;
+
+const TinyTreasure = Styled.button`
+margin: 10px auto;
+padding: 10px;
 `;
 
 const ControlContainer = Styled.div`
